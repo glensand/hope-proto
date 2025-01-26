@@ -27,6 +27,7 @@ namespace hope::proto {
         array,
         struct_value,
         file,
+        blob,
         count
     };
 
@@ -66,6 +67,35 @@ namespace hope::proto {
 
         std::string name;
         e_argument_type argument_type;
+    };
+
+    template<typename TStream>
+    class argument_blob final : public argument<TStream> {
+    public:
+        argument_blob()
+            : argument<TStream>(e_argument_type::blob){}
+
+        argument_blob(std::string&& in_name, std::vector<uint8_t>&& blob)
+                : argument<TStream>(std::move(in_name), e_argument_type::blob)
+                , m_blob(std::move(blob)) {}
+
+    private:
+        virtual void write_value(TStream& stream) override {
+            stream.template write(uint32_t(m_blob.size()));
+            stream.write(m_blob.data(), m_blob.size());
+        }
+
+        virtual void read_value(TStream& stream) override {
+            const auto size = stream.template read<uint32_t>();
+            m_blob.resize(size);
+            stream.read(m_blob.data(), m_blob.size());
+        }
+
+        [[nodiscard]] virtual void* get_value_internal() const override {
+            return (void*)&m_blob;
+        }
+
+        std::vector<uint8_t> m_blob;
     };
 
     template<typename TStream, typename TValue, e_argument_type Type>

@@ -79,6 +79,7 @@ namespace hope::proto {
                 : argument<TStream>(std::move(in_name), e_argument_type::blob)
                 , m_blob(std::move(blob)) {}
 
+        auto&& get_buffer() { return m_blob; }
     private:
         virtual void write_value(TStream& stream) override {
             stream.template write(uint32_t(m_blob.size()));

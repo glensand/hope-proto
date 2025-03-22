@@ -192,12 +192,13 @@ namespace hope::proto {
             values.erase(std::remove(begin(values), end(values), in_argument));
         }
 
-    private:
         argument_struct(std::string&& in_name, std::vector<argument<TStream>*>&& args)
             : argument<TStream>(std::move(in_name), e_argument_type::struct_value)
             , values(std::move(args)){
 
         }
+
+    private:
 
         void write_values(TStream& stream) const {
             stream.write(values.size());
@@ -241,7 +242,7 @@ namespace hope::proto {
         }
 
         argument_struct<TStream>* get(std::string&& name) {
-            return new argument_struct(std::move(name), std::move(values));
+            return new argument_struct<TStream>(std::move(name), std::move(values));
         }
  
         virtual ~struct_builder(){

@@ -360,6 +360,7 @@ namespace hope::proto {
             register_type(e_argument_type::string, string<TStream>{});
             register_type(e_argument_type::uint64, uint64<TStream>{});
             register_type(e_argument_type::struct_value, argument_struct<TStream>{});
+            register_type(e_argument_type::blob, argument_blob<TStream>{});
 
             factory_impl.emplace(e_argument_type::array, [](TStream& stream)-> argument<TStream>* {
                 auto sub_type = stream.template read<e_argument_type>();
